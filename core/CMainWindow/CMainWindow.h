@@ -4,29 +4,33 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QPushButton>
-#include "../CScene/CScene.h"     // Підключаємо нашу сцену
-#include "../CFigure/CFigure.h"  // Підключаємо наш трикутник
+#include <QPainter>
+#include <QPaintEvent>
+#include "../CScene/CScene.h"    
+#include "../CFigure/CFigure.h"  
 
 namespace Ui {
 class CMainWindow;
 }
 
 class CMainWindow : public QWidget {
-    Q_OBJECT // Обов'язково для роботи кнопок (slots)
+    Q_OBJECT
 
 public:
     CMainWindow(QWidget *parent = nullptr);
     ~CMainWindow();
 
+protected:
+
+    virtual void paintEvent(QPaintEvent *event) override;
+
 private slots:
-    // Слот, який виконається при натисканні кнопки
+
     void onAddTriangleClicked();
     void onDrawClicked();
     void onClearClicked();
 
 private:
-    CScene *scene;       // Вказівник на сцену
-    QGraphicsView *view;  // Вказівник на камеру
     Ui::CMainWindow *ui;
 };
 
