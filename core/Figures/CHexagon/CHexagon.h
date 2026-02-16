@@ -13,9 +13,6 @@ class CHexagon : public CFigure {
     QColor fillColor;
     QColor outColor;
 
-    double absCoef;
-    double ordCoef;
-
     public:
 
     CHexagon();

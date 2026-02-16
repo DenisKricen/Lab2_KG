@@ -15,7 +15,7 @@ CMainWindow::CMainWindow(QWidget *parent) : QWidget(parent), ui(new Ui::CMainWin
     canvas->setScene(scene);
     scene->setWidget(canvas);
 
-    connect(ui->btnCreate, &QPushButton::clicked, this, &CMainWindow::onAddTriangleClicked);
+    connect(ui->btnCreate, &QPushButton::clicked, this, &CMainWindow::onCreateClicked);
     connect(ui->btnClear,  &QPushButton::clicked, this, &CMainWindow::onClearClicked);
 }
 
@@ -23,7 +23,7 @@ CMainWindow::~CMainWindow() {
     delete ui;
 }
 
-void CMainWindow::onAddTriangleClicked() {
+void CMainWindow::onCreateClicked() {
 
     CProperties prop;
     prop.setCoefs(scene->getAbsSegment(), scene->getOrdSegment());

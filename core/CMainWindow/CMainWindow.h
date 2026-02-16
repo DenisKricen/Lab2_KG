@@ -6,7 +6,6 @@
 #include "CCanvas/CCanvas.h"
 #include "Figures/CFigure/CFigure.h"
 
-// Forward declaration для використання в CProperties
 namespace Ui {
     class CMainWindow;
 }
@@ -23,10 +22,8 @@ public:
     ~CMainWindow();
 
 private slots:
-    void onAddTriangleClicked();
+    void onCreateClicked();
     void onClearClicked();
-    // void onDrawClicked();
-    // void onClearClicked();
 };
 
 #endif // CMAINWINDOW_H

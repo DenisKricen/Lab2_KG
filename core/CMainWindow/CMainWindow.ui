@@ -113,8 +113,8 @@
        <widget class="QSpinBox" name="sbOrd">
         <property name="minimumSize">
          <size>
-          <width>101</width>
-          <height>21</height>
+          <width>150</width>
+          <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
@@ -124,10 +124,10 @@
          </size>
         </property>
         <property name="minimum">
-         <number>-100</number>
+         <number>-25</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>25</number>
         </property>
        </widget>
       </item>
@@ -141,10 +141,10 @@
       <item>
        <widget class="QSpinBox" name="sbAbs">
         <property name="minimum">
-         <number>-100</number>
+         <number>-25</number>
         </property>
         <property name="maximum">
-         <number>100</number>
+         <number>25</number>
         </property>
        </widget>
       </item>
@@ -157,8 +157,17 @@
       </item>
       <item>
        <widget class="QSpinBox" name="sbRadius">
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>23</height>
+         </size>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
         <property name="maximum">
-         <number>100</number>
+         <number>25</number>
         </property>
        </widget>
       </item>

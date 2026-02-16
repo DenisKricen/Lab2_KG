@@ -7,7 +7,7 @@ void drawAxis(QPainter& painter, int x1, int y1, int x2, int y2, QColor color, i
 
 void CScene::drawCoorSystem(QPainter& painter, int width, int height, int marks) {
     
-    drawAxis(painter, width/2, 0, width/2, height, Qt::black, 1);
+    drawAxis(painter, width/2, 0, width/2, height,  Qt::black, 1);
     drawAxis(painter, 0, height/2, width, height/2, Qt::black, 1);
 
     int markSize = 10;
@@ -78,6 +78,7 @@ void CScene::render(QPainter& painter) {
     
     painter.save();
     painter.translate(cvWd/2, cvHt/2);
+    painter.scale(absSegment, ordSegment); 
     
     for(auto figure : figures) {
         figure->draw(painter);
