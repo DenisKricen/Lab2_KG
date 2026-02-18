@@ -15,11 +15,14 @@ CMainWindow::CMainWindow(QWidget *parent) : QWidget(parent), ui(new Ui::CMainWin
     canvas->setScene(scene);
     scene->setWidget(canvas);
 
+    scene->loadFigures("figures.txt");
+
     connect(ui->btnCreate, &QPushButton::clicked, this, &CMainWindow::onCreateClicked);
     connect(ui->btnClear,  &QPushButton::clicked, this, &CMainWindow::onClearClicked);
 }
 
 CMainWindow::~CMainWindow() {
+    scene->saveFigures("figures.txt");
     delete ui;
 }
 

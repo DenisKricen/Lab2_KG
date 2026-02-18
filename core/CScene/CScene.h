@@ -7,6 +7,7 @@
 #include "Figures/CFigure/CFigure.h"
 #include "CCanvas/CCanvas.h"
 #include <vector>
+#include <string>
 
 class CScene : public QObject {
     Q_OBJECT
@@ -27,6 +28,9 @@ public:
     void addFigure(CFigure* figure);
     void clearFigures();
     void render(QPainter& painter);
+    
+    void saveFigures(const std::string& filename);
+    void loadFigures(const std::string& filename);
 
 };
 

@@ -17,3 +17,20 @@ void CTriangle::draw(QPainter& painter) {
 
     painter.restore();
 }
+
+std::string CTriangle::getType() const {
+    return "triangle";
+}
+
+std::string CTriangle::serialize() const {
+    std::ostringstream oss;
+    oss << centerX << " " << centerY << " " << size;
+    return oss.str();
+}
+
+CTriangle* CTriangle::deserialize(const std::string& data) {
+    std::istringstream iss(data);
+    int x, y, s;
+    iss >> x >> y >> s;
+    return new CTriangle(x, y, s);
+}

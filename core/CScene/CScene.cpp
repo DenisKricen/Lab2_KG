@@ -1,4 +1,8 @@
 #include "CScene.h"
+#include "Figures/CHexagon/CHexagon.h"
+#include "Figures/CTriangle/CTriangle.h"
+#include <fstream>
+#include <sstream>
 
 void drawAxis(QPainter& painter, int x1, int y1, int x2, int y2, QColor color, int marks) {
     painter.setPen(QPen(color, 1));
@@ -74,7 +78,7 @@ void CScene::render(QPainter& painter) {
     int cvWd = canvas->width();       // canvas width
     int cvHt = canvas->height();      // canvas height
 
-    drawCoorSystem(painter, cvWd, cvHt, 25);
+    drawCoorSystem(painter, cvWd, cvHt, 10);
     
     painter.save();
     painter.translate(cvWd/2, cvHt/2);
@@ -86,4 +90,39 @@ void CScene::render(QPainter& painter) {
     
     painter.restore();
 
+}
+
+void CScene::saveFigures(const std::string& filename) {
+    std::ofstream file(filename);
+    if (!file.is_open()) return;
+    
+    for(auto fig : figures) {
+        file << fig->getType() << " " << fig->serialize() << "\n";
+    }
+    file.close();
+}
+
+void CScene::loadFigures(const std::string& filename) {
+    std::ifstream file(filename);
+    if (!file.is_open()) return;
+    
+    clearFigures();
+    
+    std::string line;
+    while(std::getline(file, line)) {
+        std::istringstream iss(line);
+        std::string type;
+        iss >> type;
+        
+        std::string data;
+        std::getline(iss, data);
+        if(!data.empty() && data[0] == ' ') data = data.substr(1);
+        
+        if(type == "hexagon") {
+            figures.push_back(CHexagon::deserialize(data));
+        } else if(type == "triangle") {
+            figures.push_back(CTriangle::deserialize(data));
+        }
+    }
+    file.close();
 }

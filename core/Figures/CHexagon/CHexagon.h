@@ -3,6 +3,7 @@
 
 #include "Figures/CFigure/CFigure.h"
 #include "CProperties/CProperties.h"
+#include <sstream>
 
 class CHexagon : public CFigure {
 
@@ -18,6 +19,10 @@ class CHexagon : public CFigure {
     CHexagon();
     virtual void draw(QPainter& painter) override;
     void setProperties(CProperties& prop);
+    
+    virtual std::string serialize() const override;
+    virtual std::string getType() const override;
+    static CHexagon* deserialize(const std::string& data);
 
 };
 

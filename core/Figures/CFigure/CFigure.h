@@ -2,6 +2,7 @@
 #define CFIGURE_H
 
 #include <QPainter>
+#include <string>
 #include "CProperties/CProperties.h"
 
 class CFigure {
@@ -9,6 +10,8 @@ class CFigure {
 public:
 
     virtual void draw(QPainter& painter)=0;
+    virtual std::string serialize() const = 0;
+    virtual std::string getType() const = 0;
     virtual ~CFigure() = default;
 
 };

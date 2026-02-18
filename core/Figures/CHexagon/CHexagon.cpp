@@ -42,3 +42,25 @@ void CHexagon::draw(QPainter& painter) {
 
     painter.restore();
 }
+
+std::string CHexagon::getType() const {
+    return "hexagon";
+}
+
+std::string CHexagon::serialize() const {
+    std::ostringstream oss;
+    oss << centerX << " " << centerY << " " << size << " "
+        << fillColor.red() << " " << fillColor.green() << " " << fillColor.blue() << " "
+        << outColor.red() << " " << outColor.green() << " " << outColor.blue();
+    return oss.str();
+}
+
+CHexagon* CHexagon::deserialize(const std::string& data) {
+    std::istringstream iss(data);
+    CHexagon* hex = new CHexagon();
+    int fr, fg, fb, or_, og, ob;
+    iss >> hex->centerX >> hex->centerY >> hex->size >> fr >> fg >> fb >> or_ >> og >> ob;
+    hex->fillColor = QColor(fr, fg, fb);
+    hex->outColor = QColor(or_, og, ob);
+    return hex;
+}
