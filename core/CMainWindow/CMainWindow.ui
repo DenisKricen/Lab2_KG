@@ -63,6 +63,19 @@
        <string>Parameters mode</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="btnSetPoints">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>60</y>
+        <width>111</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Set points</string>
+      </property>
+     </widget>
     </widget>
    </item>
    <item>

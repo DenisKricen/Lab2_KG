@@ -1,6 +1,8 @@
 #include "CBeziersCurve.h"
 #include <cmath>
 #include <sstream>
+#include <QElapsedTimer>
+#include <QDebug>
 
 CBeziersCurve::CBeziersCurve() {
     pace=0.05;
@@ -75,10 +77,13 @@ std::string CBeziersCurve::getType() const{
     return "beziers_curve";
 }
 
-int fct(int num) {
-    int result = 1;
-    for (int i = 2; i <= num; ++i)
-        result *= i;
+double binomial(int n, int k) {
+    if (k > n - k) k = n - k;
+    double result = 1.0;
+    for (int i = 0; i < k; ++i) {
+        result *= (n - i);
+        result /= (i + 1);
+    }
     return result;
 }
 
@@ -155,6 +160,10 @@ void CBeziersCurve::drawParam(QPainter& painter) {
     int dotsCount = curve.size();
     int n = dotsCount - 1;
 
+    // Timer
+    QElapsedTimer timer;
+    timer.start();
+
     QVector<QPointF> points;
     int numSteps = std::max(1, static_cast<int>(std::ceil((tMax - tMin) / pace)));
     for(int step = 0; step <= numSteps; ++step) {
@@ -162,7 +171,7 @@ void CBeziersCurve::drawParam(QPainter& painter) {
         QPointF point;
         for(int i=0;i<dotsCount;i++) {
 
-            double A = (double)fct(n)/(fct(i)*fct(n-i));
+            double A = binomial(n, i);
             double B = A * pow(t,i)*pow(1-t,n-i);
 
             point.rx() += curve[i].x() * B;
@@ -176,6 +185,10 @@ void CBeziersCurve::drawParam(QPainter& painter) {
     pen.setCosmetic(true);
     painter.setPen(pen);
     painter.drawPolyline(points);
+
+    // Timer showing
+    qDebug() << "Drawing Beziers curve via parametric method: " << (timer.nsecsElapsed()/1000000.0) << " ms";
+
     painter.restore();
     drawRect(painter);
 }
@@ -184,12 +197,15 @@ void CBeziersCurve::drawMatrix(QPainter& painter) {
     if(curve.empty()) return;
     int dotsCount = curve.size();
     int n = dotsCount - 1;
+    
+    QElapsedTimer timer;
+    timer.start();
 
     QVector<QVector<double>> M(dotsCount, QVector<double>(dotsCount, 0.0));
     for(int i = 0; i <= n; i++) {
         for(int j = 0; j <= n-i; j++) {
-            double Cnj = (double)fct(n) / (fct(j) * fct(n - j));
-            double Cji = (double)fct(n-j) / (fct(n-i-j) * fct((n-j)-(n-i-j)));
+            double Cnj = binomial(n, j);
+            double Cji = binomial(n - j, n - i - j);
             M[i][j] = pow(-1, n-j-i) * Cnj * Cji;
         }
     }
@@ -232,20 +248,25 @@ void CBeziersCurve::drawMatrix(QPainter& painter) {
     pen.setCosmetic(true);
     painter.setPen(pen);
     painter.drawPolyline(points);
+
+    qDebug() << "Drawing Beziers curve via matrix method: " << (timer.nsecsElapsed()/1000000.0) << " ms";
+
+
     painter.restore();
     drawRect(painter);
 }
 
 QString CBeziersCurve::getMatrixInfo() const {
-    if (curve.size() < 2) return "Not enough points for matrix.";
+    if (curve.size() < 2) 
+        return "Not enough points for matrix.";
     int dotsCount = curve.size();
     int n = dotsCount - 1;
 
     QVector<QVector<double>> M(dotsCount, QVector<double>(dotsCount, 0.0));
     for (int i = 0; i <= n; i++) {
         for (int j = 0; j <= n - i; j++) {
-            double Cnj = (double)fct(n) / (fct(j) * fct(n - j));
-            double Cji = (double)fct(n - j) / (fct(n - i - j) * fct((n - j) - (n - i - j)));
+            double Cnj = binomial(n, j);
+            double Cji = binomial(n - j, n - i - j);
             M[i][j] = pow(-1, n - j - i) * Cnj * Cji;
         }
     }

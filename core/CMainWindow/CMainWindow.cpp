@@ -6,11 +6,18 @@
 #include <QColorDialog>
 #include <QPushButton>
 #include <QResizeEvent>
+#include <QRandomGenerator>
+#include <QElapsedTimer>
+#include <QDialog>
+#include <QSpinBox>
+#include <QVBoxLayout>
+#include <QDialogButtonBox>
+#include <QLabel>
 #include <iostream>
 #include <cmath>
 using std::cout, std::endl;
 
-CMainWindow::CMainWindow(QWidget *parent) : QWidget(parent), ui(new Ui::CMainWindow) {
+CMainWindow::CMainWindow(QWidget *parent, int randomPoints) : QWidget(parent), ui(new Ui::CMainWindow) {
     ui->setupUi(this);
 
     canvas = qobject_cast<CCanvas*>(ui->canvas);
@@ -42,6 +49,7 @@ CMainWindow::CMainWindow(QWidget *parent) : QWidget(parent), ui(new Ui::CMainWin
     connect(ui->pointList->model(), &QAbstractItemModel::rowsMoved, this, &CMainWindow::onPointsMoved);
     connect(ui->toMatrixMode, &QPushButton::clicked, this, &CMainWindow::onMatrixMode);
     connect(ui->toParamMode, &QPushButton::clicked, this, &CMainWindow::onParamMode);
+    connect(ui->btnSetPoints, &QPushButton::clicked, this, &CMainWindow::onSetPointsClicked);
 
     if (loadedCurve) {
         ui->valueT->setValue(loadedCurve->getPace());
@@ -52,6 +60,11 @@ CMainWindow::CMainWindow(QWidget *parent) : QWidget(parent), ui(new Ui::CMainWin
         ui->valueT->setValue(0.05);
         ui->minValueT->setValue(0.0);
         ui->maxValueT->setValue(1.0);
+    }
+
+    if (randomPoints > 0) {
+        generateRandomPoints(randomPoints);
+        rebuildPointList();
     }
 
     updateLog();
@@ -234,5 +247,53 @@ void CMainWindow::updateLog() {
         ui->logText->appendPlainText(curve->getMatrixInfo());
     } else {
         ui->logText->appendPlainText("=== PARAMETERS MODE ===");
+    }
+}
+
+void CMainWindow::generateRandomPoints(int count) {
+    CBeziersCurve* curve = scene->getCurve();
+    if (!curve) return;
+
+    curve->clearPoints();
+
+    QRandomGenerator* rng = QRandomGenerator::global();
+    // Generate random coordinates in range [-10, 10]
+    for (int i = 0; i < count; ++i) {
+        double x = rng->bounded(2000) / 100.0 - 10.0;  // [-10.0, 10.0]
+        double y = rng->bounded(2000) / 100.0 - 10.0;
+        curve->addPoint(QPointF(x, y));
+    }
+
+    cout << "Generated " << count << " random points for Bezier curve" << endl;
+}
+
+void CMainWindow::onSetPointsClicked() {
+    QDialog dlg(this);
+    dlg.setWindowTitle("Generate random points");
+
+    QVBoxLayout* layout = new QVBoxLayout(&dlg);
+
+    QLabel* label = new QLabel("Number of points:", &dlg);
+    layout->addWidget(label);
+
+    QSpinBox* spinBox = new QSpinBox(&dlg);
+    spinBox->setMinimum(0);
+    spinBox->setMaximum(INT_MAX);
+    spinBox->setValue(10);
+    layout->addWidget(spinBox);
+
+    QDialogButtonBox* buttons = new QDialogButtonBox(
+        QDialogButtonBox::Ok | QDialogButtonBox::Cancel, &dlg);
+    layout->addWidget(buttons);
+
+    connect(buttons, &QDialogButtonBox::accepted, &dlg, &QDialog::accept);
+    connect(buttons, &QDialogButtonBox::rejected, &dlg, &QDialog::reject);
+
+    if (dlg.exec() == QDialog::Accepted) {
+        int count = spinBox->value();
+        generateRandomPoints(count);
+        rebuildPointList();
+        updateLog();
+        canvas->update();
     }
 }
