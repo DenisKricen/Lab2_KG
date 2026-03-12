@@ -216,24 +216,19 @@ void CBeziersCurve::drawMatrix(QPainter& painter) {
         }
     }
 
-    QVector<QVector<double>> Mt(dotsCount, QVector<double>(dotsCount, 0.0));
-    for(int i = 0; i <= n; i++) {
-        for(int j = 0; j <= n; j++) {
-            Mt[i][j] = M[j][i];
-        }
-    }
-
     QVector<QPointF> points;
+    QVector<double> T(dotsCount);
+    QVector<double> C(dotsCount);
     int numSteps = std::max(1, static_cast<int>(std::ceil((tMax - tMin) / pace)));
     for(int step = 0; step <= numSteps; ++step) {
         double t = tMin + step * (tMax - tMin) / numSteps;
         
-        QVector<double> T;
-        for(int i = n; i >= 0; i--) {
-            T.append(pow(t, i));
+        
+        for(int i = 0; i <= n; i++) {
+            T[i] = pow(t, n - i); 
         }
 
-        QVector<double> C(dotsCount, 0.0);
+        C.fill(0.0);
         for(int j = 0; j <= n; j++) {
             for(int i = 0; i <= n; i++) {
                 C[j] += T[i] * M[i][j]; 
